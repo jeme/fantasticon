@@ -5,10 +5,11 @@ import { Arguments } from '../types/utils.js';
 
 type WoffOptions = Arguments<typeof ttf2woff>[1];
 type TtfOptions = svg2ttf.FontOptions;
+
 type SvgOptions = Omit<
   SVGIcons2SVGFontStreamOptions,
   'fontName' | 'fontHeight' | 'descent' | 'normalize'
->;
+> & { ligatures: (undefined | boolean | ((id:string, path:string) => string)) };
 
 interface JsonOptions {
   indent?: number;
