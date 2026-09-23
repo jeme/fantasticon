@@ -1,48 +1,26 @@
 {
-  "name": "fantasticon",
+  "name": "@dotjem/fantasticon",
   "version": "0.0.0",
   "description": "Icon font generation tool",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/tancredi/fantasticon.git"
-  },
   "keywords": [
-    "icons",
     "fonts",
     "iconfonts",
+    "icons",
     "svg",
     "vector"
   ],
-  "author": "Tancredi Trugenberger",
+  "homepage": "",
   "bugs": {
-    "url": "https://github.com/tancredi/fantasticon/issues"
-  },
-  "homepage": "https://github.com/tancredi/fantasticon#readme",
-  "type": "module",
-  "exports": {
-    "require": "./dist/index.cjs",
-    "import": "./dist/index.js"
-  },
-  "main": "dist/index.cjs",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "bin": {
-    "fantasticon": "bin/fantasticon"
+    "url": ""
   },
   "license": "MIT",
-  "scripts": {
-    "test": "vitest run",
-    "test:watch": "vitest dev",
-    "build": "rimraf dist && npm run ts",
-    "ts": "tsup --dts --format esm,cjs src/index.ts src/cli/index.ts",
-    "build:package:cjs": "touch ./dist/cjs/package.json && echo '{\"type\": \"commonjs\"}' > ./dist/cjs/package.json",
-    "build:cjs": "tsc --project ./tsconfig.cjs.json && npm run build:package:cjs",
-    "build:package:esm": "touch ./dist/esm/package.json && echo '{\"type\": \"module\"}' > ./dist/esm/package.json",
-    "build:esm": "tsc --project ./tsconfig.json && npm run build:package:esm",
-    "watch": "npm run ts -- --watch",
-    "typecheck": "tsc --noEmit --project tsconfig.test.json --noEmit",
-    "lint": "prettier --check .",
-    "fix": "prettier --write ."
+  "author": "DotJEM",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "bin": {
+    "fantasticon": "bin/fantasticon"
   },
   "files": [
     "bin/fantasticon",
@@ -50,40 +28,49 @@
     "!dist/**/{__mocks__,__tests__}/",
     "templates/*.hbs"
   ],
-  "prepublish": "build",
+  "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    "require": "./dist/index.cjs",
+    "import": "./dist/index.js"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "build": "rimraf dist && tsup",
+    "typecheck": "tsc --noEmit --project tsconfig.test.json --noEmit",
+    "lint": "oxlint && oxfmt --check ."
+  },
   "dependencies": {
-    "case": "^1.6.3",
-    "cli-color": "^2.0.4",
-    "commander": "^14.0.2",
-    "glob": "^13.0.0",
-    "handlebars": "^4.7.8",
-    "slugify": "^1.6.6",
-    "svg2ttf": "^6.0.3",
-    "svgicons2svgfont": "^15.0.1",
+    "commander": "^15.0.0",
+    "handlebars": "^4.7.9",
+    "slugify": "^1.6.9",
+    "svg2ttf": "^6.1.0",
+    "svgicons2svgfont": "^16.0.0",
     "ttf2eot": "^3.1.0",
     "ttf2woff": "^3.0.0",
-    "ttf2woff2": "^8.0.0"
+    "wawoff2": "^2.0.1"
   },
   "devDependencies": {
-    "@types/cli-color": "^2.0.6",
-    "@types/glob": "^9.0.0",
-    "@types/node": "^25.0.3",
+    "@types/node": "^26.6.2",
     "@types/svg2ttf": "^5.0.3",
-    "@types/svgicons2svgfont": "^14.0.0",
     "@types/ttf2eot": "^2.0.2",
     "@types/ttf2woff": "^2.0.4",
-    "@types/ttf2woff2": "^6.0.0",
-    "prettier": "^3.7.4",
-    "rimraf": "^6.1.2",
-    "semantic-release": "^25.0.2",
+    "@types/wawoff2": "^1.0.2",
+    "oxfmt": "^0.62.0",
+    "oxlint": "^1.85.0",
+    "rimraf": "^6.1.3",
+    "rollup-plugin-dts": "^6.5.1",
+    "semantic-release": "^25.0.9",
     "tsup": "^8.5.1",
-    "typescript": "^5.9.3",
-    "vitest": "^4.0.16"
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.1"
   },
   "jest": {
     "preset": "ts-jest",
-    "testEnvironment": "node",
     "rootDir": "./src",
+    "testEnvironment": "node",
     "transform": {
       "^.+\\.tsx?$": [
         "ts-jest",
@@ -94,6 +81,11 @@
     }
   },
   "engines": {
-    "node": ">= 22.0"
+    "node": ">= 24.14.0"
+  },
+  "packageManager": "pnpm@10.12.4",
+  "prepublish": "build",
+  "allowScripts": {
+    "esbuild@0.27.7": true
   }
 }

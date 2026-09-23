@@ -60,6 +60,10 @@ describe('Config parser', () => {
 
   it('correctly parses acceptable values', async () => {
     await testParsed('descent', undefined, undefined);
+    await testParsed('inputDir', ["./dir1", "./dir2"], ["./dir1", "./dir2"]);
+    await testParsed('selector', undefined, undefined);
+    await testParsed('selector', null, null);
+    await testParsed('selector', '.my-class', '.my-class');
     await testParsed('descent', '1', 1);
     await testParsed('normalize', 'true', true);
     await testParsed('normalize', '1', true);
@@ -67,7 +71,7 @@ describe('Config parser', () => {
   });
 
   it('throws expected validation errors when given invalid input', async () => {
-    await testError({ inputDir: 2 }, 'inputDir', '2 is not a string');
+    await testError({ inputDir: 2 }, 'inputDir', '2 is not a string or list of strings');
     await testError(
       { inputDir: {} },
       'inputDir',
@@ -97,6 +101,10 @@ describe('Config parser', () => {
     checkPathMock.mockImplementationOnce(() => Promise.resolve(false));
 
     await testError({ inputDir: 'foo' }, 'inputDir', 'foo is not a directory');
+
+    checkPathMock.mockImplementation((val) => Promise.resolve(val === "src"));
+    await testError({ inputDir: ['src', 'foo'] }, 'inputDir', 'foo is not a directory');
+    checkPathMock.mockClear();
 
     checkPathMock.mockImplementation(val => Promise.resolve(val !== 'bar'));
 

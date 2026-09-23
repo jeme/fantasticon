@@ -1,28 +1,26 @@
-![Logo](https://fantasticon.s3.eu-west-2.amazonaws.com/readme/logo.png)
+# Fantasticon
 
-<h2 align="center">Fantasticon</h2>
+Easy-to-use, pre-configured CLI tool to generate web-font icon kits from SVG files
 
-![Screenshot](https://fantasticon.s3.eu-west-2.amazonaws.com/readme/screenshot.png)
-
-<blockquote align="center">
-  Easy-to-use, pre-configured CLI tool to generate web-font icon kits from SVG files
-</blockquote>
-
-<p align="center">
-  <img src="https://github.com/tancredi/fantasticon/workflows/Test/badge.svg" alt="Test status">
-  <img src="https://github.com/tancredi/fantasticon/workflows/Release/badge.svg" alt="Release status">
-</p>
-
-### Intro
+## Intro
 
 Icon-font generation, easy to use and highly configurable.
 
 It also generates TypeScript types, JSON maps of the generated code-points, allowing for a great deal of different usages, e.g. integrating with React type-safe icon components or integration on mobile apps by just combining TTF and JSON generation.
 
-### Install
+## Install
+
+Fantasticon currently requires Node 24.14.0 or newer.
+
+If you use `nvm`, install and activate the project version from `.nvmrc` first:
 
 ```bash
-npm install -g fantasticon
+nvm install
+nvm use
+```
+
+```bash
+pnpm add -g @denysvuika/fantasticon
 ```
 
 ## Use
@@ -37,7 +35,7 @@ fantasticon my-icons -o icon-dist
 
 **Note:** Not all options can be specified through the command line - for `formatOptions`, `pathOptions`, `getIconId` and `templates` use a [configuration file](#configuration-file) or the JavaScript [API](#api).
 
-```
+```text
 Usage: fantasticon [options] [input-dir]
 
 Options:
@@ -50,6 +48,7 @@ Options:
   -h, --font-height <value>    the output font height (icons will be scaled so the highest has this height) (default: 300)
   --descent <value>            the font descent
   --normalize [bool]           normalize icons by scaling them to the height of the highest icon
+  --ts-quotes <value>          generate TypeScript strings with single or double quotes (default: double)
   -r, --round [bool]           setup the SVG path rounding [10e12]
   --selector <value>           use a CSS selector instead of 'tag + prefix' (default: null)
   -p, --prefix <value>         CSS class prefix (default: icon)
@@ -68,7 +67,7 @@ To have more control and better readability, you can create a simple configurati
 
 By default, `fantasticon` will look for one of following files in the working directory:
 
-```
+```text
 .fantasticonrc | fantasticonrc | .fantasticonrc.json | fantasticonrc.json | .fantasticonrc.js | fantasticonrc.js
 ```
 
@@ -135,7 +134,7 @@ module.exports = {
 #### Simple usage
 
 ```ts
-import { generateFonts } from 'fantasticon';
+import { generateFonts } from '@denysvuika/fantasticon';
 
 const results = await generateFonts();
 
@@ -145,7 +144,7 @@ console.log('Done', results);
 #### Options
 
 ```js
-import { generateFonts } from 'fantasticon';
+import { generateFonts } from '@denysvuika/fantasticon';
 
 generateFonts({
   name: 'icons',
@@ -179,7 +178,7 @@ This allows arranging your icons in namespaces, which can be useful if a project
 
 Considering the following `./icons` input directory:
 
-```
+```text
 icons
 ├── logo.svg
 ├── social
@@ -203,14 +202,14 @@ And the generated icon IDs would be:
 
 You can provide a `getIconId` function via the configuration file to customize how the icon IDs / CSS selectors are derived from the filepath. The function will receive relative paths to the icon and the input directory as arguments, and must return a unique string to be used as the ID.
 
-### Support
-
-The library is currently actively maintained for for Node 16.x.x support or above
-
-### Contribute
-
-PRs are always welcome. If you need help questions, want to bounce ideas or just say hi, [join the Discord channel](https://discord.gg/BXAY3Kc3mp).
-
 ### License
 
-Copyright (c) 2026 Tancredi Trugenberger. - Released under the [MIT license](https://github.com/tancredi/fantasticon/blob/master/LICENSE)
+Copyright (c) 2026 Denys Vuika. - Released under the [MIT license](https://github.com/DenysVuika/fantasticon/blob/master/LICENSE)
+
+---
+
+### Fork Notice
+
+This package (`@denysvuika/fantasticon`) is a fork of [fantasticon](https://github.com/tancredi/fantasticon) by **Tancredi Trugenberger Ltd**, maintained to address security issues and keep the project up to date.
+
+The original project is released under the [MIT license](https://github.com/tancredi/fantasticon/blob/master/LICENSE). This fork continues under the same license.

@@ -1,10 +1,32 @@
-import { default as caseUtil } from 'case';
 import { FontGenerator } from '../../types/generator.js';
+
+/**
+ * Converts a string to PascalCase.
+ * Splits on non-alphanumeric characters and capitalises each word.
+ * e.g. "my-icons-set" -> "MyIconsSet"
+ */
+const toPascalCase = (s: string): string =>
+  s
+    .replace(/[^a-zA-Z0-9]+(.)?/g, (_, char) =>
+      char ? char.toUpperCase() : ''
+    )
+    .replace(/^(.)/, ch => ch.toUpperCase());
+
+/**
+ * Converts a string to SCREAMING_SNAKE_CASE (CONSTANT_CASE).
+ * e.g. "my-icons-set" -> "MY_ICONS_SET"
+ */
+const toConstantCase = (s: string): string =>
+  s
+    .replace(/([a-z])([A-Z])/g, '$1_$2')
+    .replace(/[^a-zA-Z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '')
+    .toUpperCase();
 
 const generateEnumKeys = (assetKeys: string[]): Record<string, string> =>
   assetKeys
     .map(name => {
-      const enumName = caseUtil.pascal(name);
+      const enumName = toPascalCase(name);
       const prefix = enumName.match(/^\d/) ? 'i' : '';
 
       return {
@@ -86,20 +108,24 @@ const generator: FontGenerator = {
     assets,
     formatOptions: { ts } = {}
   }) => {
-    const quote = Boolean(ts?.singleQuotes) ? "'" : '"';
+    if (!name) {
+      throw new Error('name is required for TS generation');
+    }
+
+    const quote = ts?.singleQuotes ? "'" : '"';
     const generateKind: Record<string, boolean> = (
-      Boolean(ts?.types?.length)
+      ts?.types?.length
         ? ts.types
         : ['enum', 'constant', 'literalId', 'literalKey']
     )
       .map(kind => ({ [kind]: true }))
       .reduce((prev, curr) => Object.assign(prev, curr), {});
 
-    const enumName = ts?.enumName || caseUtil.pascal(name);
+    const enumName = ts?.enumName || toPascalCase(name);
     const constantName =
-      ts?.constantName || `${caseUtil.constant(name)}_CODEPOINTS`;
-    const literalIdName = ts?.literalIdName || `${caseUtil.pascal(name)}Id`;
-    const literalKeyName = ts?.literalKeyName || `${caseUtil.pascal(name)}Key`;
+      ts?.constantName || `${toConstantCase(name)}_CODEPOINTS`;
+    const literalIdName = ts?.literalIdName || `${toPascalCase(name)}Id`;
+    const literalKeyName = ts?.literalKeyName || `${toPascalCase(name)}Key`;
     const names = { enumName, constantName, literalIdName, literalKeyName };
 
     const enumKeys = generateEnumKeys(Object.keys(assets));

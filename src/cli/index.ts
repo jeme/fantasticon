@@ -3,9 +3,9 @@ import { FontAssetType, OtherAssetType } from '../types/misc.js';
 import { loadConfig, DEFAULT_FILEPATHS } from './config-loader.js';
 import { DEFAULT_OPTIONS } from '../constants.js';
 import { generateFonts } from '../core/runner.js';
-import { removeUndefined } from '../utils/validation.js';
 import { getLogger } from './logger.js';
 import { getPackageInfo } from '../utils/module.js';
+import { buildOptions } from './build-options.js';
 
 const packageInfo = getPackageInfo();
 
@@ -24,7 +24,7 @@ const cli = async () => {
     logger.start(loadedConfigPath);
     logger.results(results);
   } catch (error) {
-    logger.error(error);
+    logger.error(error instanceof Error ? error : String(error));
     process.exitCode = 1;
   }
 };
@@ -44,7 +44,7 @@ const printDefaultValue = (value: any) => {
   return ` (default: ${printVal})`;
 };
 
-const printDefaultOption = (key: string) =>
+const printDefaultOption = (key: keyof typeof DEFAULT_OPTIONS) =>
   printDefaultValue(DEFAULT_OPTIONS[key]);
 
 const printConfigPaths = () => DEFAULT_FILEPATHS.join(' | ');
@@ -75,13 +75,13 @@ const config = () => {
     .option(
       '-t, --font-types <value...>',
       `specify font formats to generate` +
-        printList(FontAssetType, DEFAULT_OPTIONS.fontTypes)
+        printList(FontAssetType, DEFAULT_OPTIONS.fontTypes as string[])
     )
 
     .option(
       '-g --asset-types <value...>',
       `specify other asset types to generate` +
-        printList(OtherAssetType, DEFAULT_OPTIONS.assetTypes)
+        printList(OtherAssetType, DEFAULT_OPTIONS.assetTypes as string[])
     )
 
     .option(
@@ -99,6 +99,11 @@ const config = () => {
       '--normalize [bool]',
       'normalize icons by scaling them to the height of the highest icon' +
         printDefaultOption('normalize')
+    )
+
+    .option(
+      '--ts-quotes <value>',
+      'generate TypeScript strings with single or double quotes (default: double)'
     )
 
     .option('-r, --round [bool]', 'setup the SVG path rounding [10e12]')
@@ -127,30 +132,6 @@ const config = () => {
     .option('--debug', 'display errors stack trace' + printDefaultValue(false))
 
     .option('--silent', 'run with no logs' + printDefaultValue(false));
-};
-
-const buildOptions = async (cmd: commander.Command, loadedConfig = {}) => {
-  const [inputDir] = cmd.args;
-  const opts = cmd.opts();
-
-  return {
-    ...loadedConfig,
-    ...removeUndefined({
-      inputDir,
-      outputDir: opts.output,
-      name: opts.name,
-      fontTypes: opts.fontTypes,
-      assetTypes: opts.assetTypes,
-      fontHeight: opts.fontHeight,
-      descent: opts.descent,
-      normalize: opts.normalize,
-      round: opts.round,
-      selector: opts.selector,
-      tag: opts.tag,
-      prefix: opts.prefix,
-      fontsUrl: opts.fontsUrl
-    })
-  };
 };
 
 const run = async (options: any) => await generateFonts(options, true);

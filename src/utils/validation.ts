@@ -20,6 +20,17 @@ export const parseString = (value: string) => {
 
   return value;
 };
+export const parseStringOrListStrings = (value: string) => {
+  if (typeof value === 'string') {
+    return value;
+  }
+
+  if (Array.isArray(value) && (<unknown[]>value).every(val => typeof val === 'string')) {
+    return value;
+  }
+
+  throw new Error(`${value} is not a string or list of strings`);
+};
 
 export const parseFunction = (value: Function) => {
   if (typeof value !== 'function') {
@@ -46,7 +57,7 @@ export const listMembersParser =
     return values as T[];
   };
 
-export const removeUndefined = (object: Object) => {
+export const removeUndefined = (object: Record<string, any>) => {
   for (const key of Object.keys(object)) {
     if (typeof object[key] === 'undefined') {
       delete object[key];
@@ -78,6 +89,16 @@ export const parseDir = async (dirname: string) => {
   }
 
   return dirname;
+};
+
+export const parseDirOrListOfDirs = async (dirOrListOfDir: string|string[]) => {
+  const allDirs = typeof dirOrListOfDir === 'string' ? [dirOrListOfDir] : dirOrListOfDir;
+  for (const dirname of allDirs) {
+    if ((await checkPath(dirname, 'directory')) === false) {
+      throw new Error(`${dirname} is not a directory`);
+    }
+  }
+  return dirOrListOfDir;
 };
 
 export const nullable = skipIfMatching(null);

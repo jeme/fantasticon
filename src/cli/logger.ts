@@ -1,4 +1,4 @@
-import color from 'cli-color';
+import { styleText } from 'node:util';
 import { RunnerResults } from '../core/runner.js';
 import { pluralize } from '../utils/string.js';
 
@@ -6,22 +6,27 @@ export const getLogger = (debug = false, silent = false) => ({
   error(error: Error | string) {
     const message = (error instanceof Error && error.message) || error;
 
-    console.log(color.red(message));
+    console.log(styleText('red', String(message)));
 
-    debug && error instanceof Error && console.log(error.stack);
+    if (debug && error instanceof Error && error.stack) {
+      console.log(styleText('red', error.stack));
+    }
   },
 
   log(...values: any[]) {
-    !silent && console.log(...values);
+    if (!silent) {
+      console.log(...values);
+    }
   },
 
-  start(loadedConfigPath: string = null) {
-    this.log(color.yellow(`Generating font kit...`));
+  start(loadedConfigPath: string | null = null) {
+    this.log(styleText('yellow', 'Generating font kit...'));
 
     if (loadedConfigPath) {
       this.log(
-        color.green(
-          `✔ Using configuration file: ${color.green.bold(loadedConfigPath)}`
+        styleText(
+          'green',
+          `✔ Using configuration file: ${styleText(['green', 'bold'], loadedConfigPath)}`
         )
       );
     }
@@ -31,15 +36,18 @@ export const getLogger = (debug = false, silent = false) => ({
     const iconsCount = Object.values(assetsIn).length;
 
     this.log(
-      color.white(
+      styleText(
+        'white',
         `✔ ${iconsCount} ${pluralize('SVG', iconsCount)} found in ${inputDir}`
       )
     );
 
     for (const { writePath } of writeResults) {
-      this.log(color.blue(`✔ Generated`, color.blueBright(writePath)));
+      this.log(
+        styleText('blue', `✔ Generated ${styleText('cyanBright', writePath)}`)
+      );
     }
 
-    this.log(color.green.bold('Done'));
+    this.log(styleText(['green', 'bold'], 'Done'));
   }
 });

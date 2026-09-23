@@ -8,7 +8,7 @@ import {
 import { FormatOptions } from './format.js';
 
 export interface RunnerMandatoryOptions {
-  inputDir: string;
+  inputDir: string | string[];
   outputDir: string;
 }
 
@@ -29,6 +29,9 @@ export type RunnerOptionalOptions = {
   prefix: string;
   fontsUrl: string;
   getIconId: GetIconIdFn;
+  ligatures: {
+    transform?:(name:string) => string;
+  }
 };
 
 export type RunnerOptionsInput = RunnerMandatoryOptions &

@@ -8,14 +8,16 @@ import {
   listMembersParser,
   parseNumeric,
   optional,
-  nullable
+  nullable,
+  parseStringOrListStrings,
+  parseDirOrListOfDirs
 } from '../utils/validation.js';
 import { FontAssetType, OtherAssetType } from '../types/misc.js';
 
 const CONFIG_VALIDATORS: {
   [key in keyof RunnerOptions]: Array<(val: any, cur: any) => any>;
 } = {
-  inputDir: [optional(parseString), optional(parseDir)],
+  inputDir: [optional(parseStringOrListStrings), optional(parseDirOrListOfDirs)],
   outputDir: [optional(parseString), optional(parseDir)],
   name: [optional(parseString)],
   fontTypes: [listMembersParser(Object.values(FontAssetType))],
@@ -28,19 +30,20 @@ const CONFIG_VALIDATORS: {
   descent: [optional(parseNumeric)],
   normalize: [optional(parseBoolean)],
   round: [optional(parseNumeric)],
-  selector: [nullable(parseString)],
+  selector: [optional(nullable(parseString))],
   tag: [parseString],
   prefix: [parseString],
   fontsUrl: [optional(parseString)],
-  getIconId: [optional(parseFunction)]
+  getIconId: [optional(parseFunction)],
+  ligatures: []
 };
 
 export const parseConfig = async (input: object = {}) => {
   const options = { ...DEFAULT_OPTIONS, ...input };
-  const out = {};
+  const out: Partial<RunnerOptions> = {};
   const allkeys = [
     ...new Set([...Object.keys(options), ...Object.keys(CONFIG_VALIDATORS)])
-  ];
+  ] as Array<keyof RunnerOptions>;
 
   for (const key of allkeys) {
     const validators = CONFIG_VALIDATORS[key];
@@ -49,17 +52,18 @@ export const parseConfig = async (input: object = {}) => {
       throw new Error(`The option '${key}' is not recognised`);
     }
 
-    let val = options[key];
+    let val = (options as any)[key];
 
     try {
       for (const fn of validators) {
         val = await fn(val, val);
       }
     } catch (err) {
-      throw new Error(`Invalid option ${key}: ${err.message}`);
+      const message = err instanceof Error ? err.message : String(err);
+      throw new Error(`Invalid option ${key}: ${message}`);
     }
 
-    out[key] = val;
+    (out as any)[key] = val;
   }
 
   return out as any as RunnerOptions;
