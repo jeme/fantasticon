@@ -116,7 +116,7 @@ const generator: FontGenerator<void> = {
 
             void (async () => {
                 try {
-                    for (const {id, absolutePath} of Object.values(assets)) {
+                    for (const {id, absolutePath} of assets.ordered(!!svg?.ligatures)) {
                         const glyph = await createGlyphStream(absolutePath);
                         const unicode = [getUnicodeFromCodepoint(id, codepoints?.[id])];
                         if (typeof svg?.ligatures === 'function') {
@@ -125,9 +125,8 @@ const generator: FontGenerator<void> = {
                             unicode.push(id);
                         }
 
-                        glyph.metadata = {name: id, unicode: unicode};
+                        glyph.metadata = { name: id, unicode: unicode };
                         patchGlyphPipe(glyph);
-
                         fontStream.write(glyph);
                     }
 

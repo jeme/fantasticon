@@ -1,10 +1,10 @@
 import { DEFAULT_START_CODEPOINT } from '../constants.js';
-import { AssetsMap } from './assets.js';
+import {AssetsMap, IconAssets} from './assets.js';
 
 export type CodepointsMap = { [key: string]: number };
 
 export const getCodepoints = (
-  assets: AssetsMap,
+  assets: IconAssets,
   predefined: CodepointsMap = {},
   start = DEFAULT_START_CODEPOINT
 ): CodepointsMap => {

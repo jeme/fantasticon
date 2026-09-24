@@ -1,16 +1,13 @@
 import { it, describe, expect } from 'vitest';
 import { DEFAULT_START_CODEPOINT } from '../../constants';
-import { AssetsMap } from '../assets';
+import {AssetsMap, IconAssets} from '../assets';
 import { getCodepoints, getHexCodepoint } from '../codepoints';
 
-const mockAssetsMap = (ids: string[] = ['foo', 'bar', 'test']): AssetsMap =>
-  ids.reduce(
-    (cur = {}, id) => ({
-      ...cur,
-      [id]: { id, relativePath: '...', absolutePath: '...' }
-    }),
-    {}
-  );
+const mockAssetsMap = (ids: string[] = ['foo', 'bar', 'test']): IconAssets =>
+    ids.reduce((assets, id) => {
+      assets.set(id, {id, relativePath: '...', absolutePath: '...'});
+      return assets;
+    }, new IconAssets());
 
 describe('CodePoints utilities', () => {
   it('exports a valid `DEFAULT_START_CODEPOINT`', () => {

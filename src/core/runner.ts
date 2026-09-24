@@ -4,7 +4,7 @@ import {
   loadAssets,
   writeAssets,
   AssetsMap,
-  WriteResults
+  WriteResults, IconAssets
 } from '../utils/assets.js';
 import { CodepointsMap } from '../utils/codepoints.js';
 import { getGeneratorOptions } from '../generators/generator-options.js';
@@ -15,7 +15,7 @@ import { generateAssets } from '../generators/index.js';
 export interface RunnerResults {
   options: RunnerOptions;
   writeResults: WriteResults;
-  assetsIn: AssetsMap;
+  assetsIn: IconAssets;
   assetsOut: GeneratedAssets;
   codepoints: CodepointsMap;
 }

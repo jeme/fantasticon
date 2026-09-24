@@ -10,11 +10,11 @@ import {
   ASSET_TYPES,
   ASSET_TYPES_WITH_TEMPLATE
 } from '../types/misc.js';
-import { AssetsMap } from '../utils/assets.js';
+import {AssetsMap, IconAssets} from '../utils/assets.js';
 
 export const getGeneratorOptions = (
   options: RunnerOptions,
-  assets: AssetsMap
+  assets: IconAssets
 ): FontGeneratorOptions => ({
   ...options,
   codepoints: getCodepoints(assets, options.codepoints),

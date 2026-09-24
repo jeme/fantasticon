@@ -1,6 +1,6 @@
 import { vi, it, describe, expect, Mock, beforeEach } from 'vitest';
 import { prefillOptions, getGeneratorOptions } from '../generator-options';
-import { AssetsMap } from '../../utils/assets';
+import {AssetsMap, IconAssets} from '../../utils/assets';
 import { ASSET_TYPES, ASSET_TYPES_WITH_TEMPLATE } from '../../types/misc';
 import { getCodepoints } from '../../utils/codepoints';
 
@@ -71,7 +71,8 @@ describe('Font generator options', () => {
       formatOptions,
       pathOptions
     } as any;
-    const assets = { __mock: 'runnerOptions__' } as unknown as AssetsMap;
+    const assets =new IconAssets();// { __mock: 'runnerOptions__' } as unknown as AssetsMap;
+    (assets as any).__mock = "runnerOptions__"
     const generatorOptions = getGeneratorOptions(options, assets);
     expect(generatorOptions).toEqual(
       expect.objectContaining({
@@ -101,7 +102,7 @@ describe('Font generator options', () => {
   it('`getGeneratorOptions` calls `getCodepoints` with input assets and codepoints', () => {
     const codepointsIn = { foo: 'bar' };
     const options = { codepoints: codepointsIn } as any;
-    const assets = {} as unknown as AssetsMap;
+    const assets = new IconAssets();
 
     getGeneratorOptions(options, assets);
 
@@ -111,7 +112,7 @@ describe('Font generator options', () => {
 
   it('`getGeneratorOptions` correctly processes templates option', () => {
     const options = { templates: { html: 'user-template.hbs' } } as any;
-    const assets = {} as unknown as AssetsMap;
+    const assets = new IconAssets();
 
     expect(getGeneratorOptions(options, assets).templates.css).toMatch(
       '/foo/templates-dir/css.hbs'

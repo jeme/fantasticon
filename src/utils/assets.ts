@@ -21,6 +21,31 @@ export interface AssetsMap {
 
 export const ASSETS_EXTENSION = 'svg';
 
+export class IconAssets {
+    private assets: { [key: string]: IconAsset } = {};
+
+    public set(key: string, value: IconAsset) {
+        if(this.assets.hasOwnProperty(key)) {
+            throw new Error(
+                `Conflicting result from 'getIconId': '${key}' - conflicting input files:\n`
+                + `  - ${this.get(key).relativePath}\n`
+                + `  - ${value.relativePath}`
+            );
+        }
+        this.assets[key] = value;
+    }
+
+    public get(key: string): IconAsset {
+        return this.assets[key];
+    };
+
+    public ordered(forLigatures: boolean) {
+        const keys = Object.keys(this.assets);
+        if(forLigatures) keys.sort().reverse();
+        return keys.map(key => this.get(key));
+    }
+}
+
 export const loadPaths = async (dir: string): Promise<string[]> => {
     const globPath = join(dir, `**/*.${ASSETS_EXTENSION}`);
     const files = await Array.fromAsync(glob(globPath));
@@ -33,20 +58,10 @@ export const loadPaths = async (dir: string): Promise<string[]> => {
     return files.sort((a, b) => a.localeCompare(b));
 };
 
-const failForConflictingId = (
-    {relativePath: pathA, id}: IconAsset,
-    {relativePath: pathB}: IconAsset
-): void => {
-    throw new Error(
-        `Conflicting result from 'getIconId': '${id}' - conflicting input files:\n` +
-        [pathA, pathB].map(fpath => `  - ${fpath}`).join('\n')
-    );
-};
-
 export const loadAssets = async ({
                                      inputDir,
                                      getIconId
-                                 }: RunnerOptions): Promise<AssetsMap> => {
+                                 }: RunnerOptions): Promise<IconAssets> => {
     if (!inputDir) {
         throw new Error('inputDir is required');
     }
@@ -54,8 +69,7 @@ export const loadAssets = async ({
         throw new Error('getIconId is required');
     }
 
-    const assetMap: AssetsMap = {};
-
+    const assets = new IconAssets();
     if (Array.isArray(inputDir)) {
         for (const input of inputDir) {
             await loadInput(input);
@@ -66,15 +80,15 @@ export const loadAssets = async ({
 
     async function loadInput(value: string | InputDirectory) {
         if (typeof value === 'string') {
-            await loadForDir({src: value, filter: () => true}, assetMap);
+            await loadForDir({src: value, filter: () => true}, assets);
         } else {
-            await loadForDir(value, assetMap);
+            await loadForDir(value, assets);
         }
     }
 
-    return assetMap;
+    return assets;
 
-    async function loadForDir(input: InputDirectory, assetMap: AssetsMap): Promise<void> {
+    async function loadForDir(input: InputDirectory, assetMap: IconAssets): Promise<void> {
         const paths = await loadPaths(input.src);
         let index = 0;
 
@@ -104,11 +118,7 @@ export const loadAssets = async ({
             });
 
             const result: IconAsset = {id: iconId, relativePath, absolutePath};
-            if (assetMap[iconId]) {
-                failForConflictingId(assetMap[iconId], result);
-            }
-
-            assetMap[iconId] = result;
+            assetMap.set(iconId, result);
             index++;
         }
     }
