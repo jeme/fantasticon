@@ -116,16 +116,16 @@ const generator: FontGenerator<void> = {
 
             void (async () => {
                 try {
-                    for (const {id, absolutePath} of assets.ordered(!!svg?.ligatures)) {
-                        const glyph = await createGlyphStream(absolutePath);
-                        const unicode = [getUnicodeFromCodepoint(id, codepoints?.[id])];
+                    for (const asset of assets.ordered(!!svg?.ligatures)) {
+                        const glyph = await createGlyphStream(asset.absolutePath);
+                        const unicode = [getUnicodeFromCodepoint(asset.id, codepoints?.[asset.id])];
                         if (typeof svg?.ligatures === 'function') {
-                            unicode.push(svg.ligatures(id, absolutePath));
+                            unicode.push(svg.ligatures(asset.id, asset.absolutePath));
                         } else if (typeof svg?.ligatures === 'boolean' && svg.ligatures) {
-                            unicode.push(id);
+                            unicode.push(asset.id);
                         }
 
-                        glyph.metadata = { name: id, unicode: unicode };
+                        glyph.metadata = { name: asset.id, unicode: unicode };
                         patchGlyphPipe(glyph);
                         fontStream.write(glyph);
                     }

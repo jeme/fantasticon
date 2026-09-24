@@ -22,7 +22,7 @@ export const getCodepoints = (
     return res;
   };
 
-  for (const id of Object.keys(assets)) {
+  for (const id of assets.keys) {
     if (!predefined[id]) {
       out[id] = getNextCodepoint();
     }

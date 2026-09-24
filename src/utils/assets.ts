@@ -24,6 +24,10 @@ export const ASSETS_EXTENSION = 'svg';
 export class IconAssets {
     private assets: { [key: string]: IconAsset } = {};
 
+    public get keys() {
+        return Object.keys(this.assets);
+    }
+
     public set(key: string, value: IconAsset) {
         if(this.assets.hasOwnProperty(key)) {
             throw new Error(
@@ -39,7 +43,7 @@ export class IconAssets {
         return this.assets[key];
     };
 
-    public ordered(forLigatures: boolean) {
+    public ordered(forLigatures: boolean):IconAsset[] {
         const keys = Object.keys(this.assets);
         if(forLigatures) keys.sort().reverse();
         return keys.map(key => this.get(key));
