@@ -7,8 +7,22 @@ import {
 } from './misc.js';
 import { FormatOptions } from './format.js';
 
+export interface Asset {
+  name: string;
+  fileName: string;
+  filePath: string;
+}
+
+export interface InputDirectory {
+  src: string;
+  filter?: (asset: Asset) => boolean;
+  prefix?: string;
+}
+
+export type InputDir = string | InputDirectory | (InputDirectory | string)[]
+
 export interface RunnerMandatoryOptions {
-  inputDir: string | string[];
+  inputDir: InputDir,
   outputDir: string;
 }
 

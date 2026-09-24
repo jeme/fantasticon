@@ -9,15 +9,14 @@ import {
   parseNumeric,
   optional,
   nullable,
-  parseStringOrListStrings,
-  parseDirOrListOfDirs
+  parseInputDir
 } from '../utils/validation.js';
 import { FontAssetType, OtherAssetType } from '../types/misc.js';
 
 const CONFIG_VALIDATORS: {
   [key in keyof RunnerOptions]: Array<(val: any, cur: any) => any>;
 } = {
-  inputDir: [optional(parseStringOrListStrings), optional(parseDirOrListOfDirs)],
+  inputDir: [optional(parseInputDir)],
   outputDir: [optional(parseString), optional(parseDir)],
   name: [optional(parseString)],
   fontTypes: [listMembersParser(Object.values(FontAssetType))],
